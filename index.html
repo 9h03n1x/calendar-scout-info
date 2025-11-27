@@ -3,13 +3,376 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendar Scout - OAuth App Information</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Calendar Scout - Stream Deck Plugin</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-dark) 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .logo span {
+            color: var(--text);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        nav a:hover {
+            color: var(--primary);
+        }
+        
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(99, 102, 241, 0.1) 100%);
+            border-radius: 1rem;
+            margin-bottom: 3rem;
+            border: 1px solid var(--border);
+        }
+        
+        .badge {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+        
+        .marketplace-link {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        
+        .marketplace-link:hover {
+            background: var(--primary-dark);
+        }
+        
+        .disclaimer-banner {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid var(--warning);
+            border-radius: 0.5rem;
+            padding: 1rem 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .disclaimer-banner h3 {
+            color: var(--warning);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .disclaimer-banner p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .disclaimer-banner p:last-child {
+            margin-bottom: 0;
+        }
+        
+        section {
+            margin-bottom: 3rem;
+        }
+        
+        h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+        
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+        
+        .card h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+        
+        .card ul {
+            list-style: none;
+        }
+        
+        .card li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-muted);
+        }
+        
+        .card li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: bold;
+        }
+        
+        .features-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: var(--bg-card);
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+        }
+        
+        .feature-icon {
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        
+        .feature-item strong {
+            display: block;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+        
+        .feature-item span {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        
+        .status-colors {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border-radius: 0.5rem;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .status-dot.green { background: var(--success); }
+        .status-dot.blue { background: var(--info); }
+        .status-dot.orange { background: var(--warning); }
+        .status-dot.red { background: var(--danger); }
+        
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .security-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 0.5rem;
+        }
+        
+        .security-item .icon {
+            font-size: 1.5rem;
+        }
+        
+        .requirements-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .requirement {
+            padding: 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+        
+        .requirement .label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+        
+        .requirement .value {
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        footer {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+        
+        .footer-section h4 {
+            color: var(--text);
+            margin-bottom: 1rem;
+        }
+        
+        .footer-section a {
+            display: block;
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 0.25rem 0;
+            transition: color 0.2s;
+        }
+        
+        .footer-section a:hover {
+            color: var(--primary);
+        }
+        
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 2rem auto 0;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .version-info {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            nav ul { gap: 1rem; }
+            .hero { padding: 2rem 1rem; }
+        }
+    </style>
 </head>
 <body>
     <header>
         <nav>
-            <div class="logo">Calendar Scout</div>
+            <a href="index.html" class="logo">Calendar<span>Scout</span></a>
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="privacy.html">Privacy Policy</a></li>
@@ -21,47 +384,235 @@
 
     <main>
         <section class="hero">
+            <span class="badge">Stream Deck Plugin</span>
             <h1>Calendar Scout</h1>
-            <p>Seamlessly integrate your calendars with Microsoft and Google services</p>
+            <p>Transform your Stream Deck into a powerful meeting assistant. View upcoming Outlook and Google Calendar events with countdown timers and one-click access to Teams, Zoom, Meet, and more.</p>
+            <a href="https://marketplace.elgato.com/product/calendar-scout-548abaef-5c0e-409e-9efd-b777795d8254" class="marketplace-link">Get it on Elgato Marketplace</a>
         </section>
 
-        <section class="apps">
-            <h2>Our OAuth Applications</h2>
-            <div class="app-cards">
-                <div class="app-card">
-                    <h3>Microsoft Calendar Integration</h3>
-                    <p>Connect your Microsoft 365 and Outlook calendars to Calendar Scout for seamless scheduling and event management.</p>
+        <div class="disclaimer-banner">
+            <h3>⚠️ Important Notices</h3>
+            <p><strong>Google:</strong> The OAuth App for Google Accounts is currently under review by Google. You may see a warning screen during the authentication process.</p>
+            <p><strong>Microsoft:</strong> In managed/enterprise environments, IT administrator approval may be required to use this plugin. This can interrupt the OAuth flow during registration. This issue is under investigation.</p>
+        </div>
+
+        <section>
+            <h2>Key Features</h2>
+            <div class="features-list">
+                <div class="feature-item">
+                    <span class="feature-icon">📅</span>
+                    <div>
+                        <strong>Multi-Provider Support</strong>
+                        <span>Works with both Microsoft Outlook and Google Calendar</span>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">👥</span>
+                    <div>
+                        <strong>Multi-Account Management</strong>
+                        <span>Add multiple work and personal calendars</span>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">⏱️</span>
+                    <div>
+                        <strong>Real-Time Countdown</strong>
+                        <span>See exactly when your next meeting starts</span>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🚀</span>
+                    <div>
+                        <strong>One-Click Join</strong>
+                        <span>Instantly join Teams, Zoom, Google Meet, Webex, and more</span>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🎨</span>
+                    <div>
+                        <strong>Smart Visual Indicators</strong>
+                        <span>Color-coded backgrounds show meeting status at a glance</span>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🔒</span>
+                    <div>
+                        <strong>Secure OAuth 2.0</strong>
+                        <span>Industry-standard authentication, no passwords stored</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="status-colors">
+                <div class="status-item">
+                    <span class="status-dot green"></span>
+                    <span>Green - You're free</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-dot blue"></span>
+                    <span>Blue - Meeting later (15+ min)</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-dot orange"></span>
+                    <span>Orange - Starting soon (≤15 min)</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-dot red"></span>
+                    <span>Red - Currently in meeting</span>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Supported Platforms</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <h3>📧 Calendar Providers</h3>
                     <ul>
-                        <li>Access your Microsoft calendar events</li>
-                        <li>Create and manage events</li>
-                        <li>Sync across devices</li>
+                        <li>Microsoft Outlook</li>
+                        <li>Office 365 / Microsoft 365</li>
+                        <li>Outlook.com</li>
+                        <li>Exchange Online</li>
+                        <li>Google Calendar (Gmail)</li>
+                        <li>Google Workspace (formerly G Suite)</li>
                     </ul>
                 </div>
-                <div class="app-card">
-                    <h3>Google Calendar Integration</h3>
-                    <p>Integrate your Google Calendar with Calendar Scout to manage all your events in one place.</p>
+                <div class="card">
+                    <h3>🎥 Meeting Platforms</h3>
                     <ul>
-                        <li>Access your Google calendar events</li>
-                        <li>Create and manage events</li>
-                        <li>Cross-platform synchronization</li>
+                        <li>Microsoft Teams</li>
+                        <li>Zoom</li>
+                        <li>Google Meet</li>
+                        <li>Webex</li>
+                        <li>Other URL-based meeting links</li>
                     </ul>
                 </div>
             </div>
         </section>
 
-        <section class="info">
-            <h2>About Calendar Scout</h2>
-            <p>Calendar Scout is a calendar integration service that helps you manage your schedules across multiple platforms. We provide secure OAuth-based connections to your Microsoft and Google calendars, ensuring your data remains protected while giving you the flexibility to access your events from anywhere.</p>
+        <section>
+            <h2>Security & Privacy</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Your data security is our priority. Calendar Scout is designed with privacy-first principles.</p>
+            <div class="security-grid">
+                <div class="security-item">
+                    <span class="icon">🔐</span>
+                    <div>
+                        <strong>OAuth 2.0 Authentication</strong>
+                        <span style="color: var(--text-muted); font-size: 0.9rem;">Industry-standard secure authentication</span>
+                    </div>
+                </div>
+                <div class="security-item">
+                    <span class="icon">🚫</span>
+                    <div>
+                        <strong>No Password Storage</strong>
+                        <span style="color: var(--text-muted); font-size: 0.9rem;">We never see or store your passwords</span>
+                    </div>
+                </div>
+                <div class="security-item">
+                    <span class="icon">👁️</span>
+                    <div>
+                        <strong>Read-Only Access</strong>
+                        <span style="color: var(--text-muted); font-size: 0.9rem;">Only reads calendar data, cannot modify</span>
+                    </div>
+                </div>
+                <div class="security-item">
+                    <span class="icon">💻</span>
+                    <div>
+                        <strong>Local Processing</strong>
+                        <span style="color: var(--text-muted); font-size: 0.9rem;">All data processed on your device</span>
+                    </div>
+                </div>
+                <div class="security-item">
+                    <span class="icon">🛡️</span>
+                    <div>
+                        <strong>No Data Transmission</strong>
+                        <span style="color: var(--text-muted); font-size: 0.9rem;">Calendar data never leaves your computer</span>
+                    </div>
+                </div>
+                <div class="security-item">
+                    <span class="icon">🔑</span>
+                    <div>
+                        <strong>Minimal Permissions</strong>
+                        <span style="color: var(--text-muted); font-size: 0.9rem;">Only requests what's necessary</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Requirements</h2>
+            <div class="requirements-list">
+                <div class="requirement">
+                    <div class="label">Stream Deck Software</div>
+                    <div class="value">7.0 or later</div>
+                </div>
+                <div class="requirement">
+                    <div class="label">Windows</div>
+                    <div class="value">Windows 10+</div>
+                </div>
+                <div class="requirement">
+                    <div class="label">macOS</div>
+                    <div class="value">macOS 12+</div>
+                </div>
+                <div class="requirement">
+                    <div class="label">Connection</div>
+                    <div class="value">Active Internet</div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>OAuth Applications</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Calendar Scout uses registered OAuth applications with Microsoft and Google to securely access your calendar data.</p>
+            <div class="card-grid">
+                <div class="card">
+                    <h3>Microsoft Calendar Integration</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 1rem;">Connect your Microsoft 365 and Outlook calendars for seamless event management.</p>
+                    <ul>
+                        <li>Access Microsoft calendar events</li>
+                        <li>View meeting details and join links</li>
+                        <li>Support for work and personal accounts</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Google Calendar Integration</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 1rem;">Integrate your Google Calendar to manage all your events in one place.</p>
+                    <ul>
+                        <li>Access Google calendar events</li>
+                        <li>View meeting details and join links</li>
+                        <li>Support for Gmail and Workspace accounts</li>
+                    </ul>
+                </div>
+            </div>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2024 Calendar Scout. All rights reserved.</p>
-        <ul>
-            <li><a href="privacy.html">Privacy Policy</a></li>
-            <li><a href="terms.html">Terms of Service</a></li>
-            <li><a href="contact.html">Contact Us</a></li>
-        </ul>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Product</h4>
+                <a href="https://marketplace.elgato.com/product/calendar-scout-548abaef-5c0e-409e-9efd-b777795d8254">Elgato Marketplace</a>
+                <a href="index.html">Home</a>
+            </div>
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+            </div>
+            <div class="footer-section">
+                <h4>Support</h4>
+                <a href="contact.html">Contact Us</a>
+                <a href="mailto:support@calendarscout.app">support@calendarscout.app</a>
+            </div>
+            <div class="footer-section">
+                <h4>Developer</h4>
+                <a href="https://github.com/9h03n1x">GitHub</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2024 Calendar Scout. All rights reserved.</p>
+            <p class="version-info">Version 0.7.0.8 | Stream Deck Plugin</p>
+        </div>
     </footer>
 </body>
 </html>
